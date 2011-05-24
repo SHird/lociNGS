@@ -1,0 +1,48 @@
+#!/usr/bin/python
+# Filename: locusIndex_db.py for lociNGS
+# shird; 24 may 2011
+import os
+from Bio import SeqIO
+import pymongo
+from pymongo import Connection
+import re
+
+
+#for making pymongo work
+connection = Connection()
+db = connection.test_database
+collection = db.test_collection
+
+#to get directory of locus files (in fasta format, for now)
+#need to dynamically enter path, look up how will incorporate with GUIs?
+path = "/Users/shird/Documents/Dropbox/lociNGS1/fasta"
+fasta_library = os.listdir(path)
+#print fasta_library
+
+#print data to post collection in mongoDB
+for fasta in fasta_library:
+	file = os.path.join(path, fasta)
+	rail_dict = SeqIO.index(file, "fasta")
+###this is really clumsy to have to import again as a list, but i couldn't figure out how to get the length of the first seq object without knowing the name for the key
+	handle = open(file, "rU")
+	records = list(SeqIO.parse(file, "fasta"))
+	handle.close()
+
+#	print len(rail_dict), rail_dict.keys()
+	locus = {"locus":fasta, "individuals":rail_dict.keys(), "length": len(records[0].seq)}   #, "length":len(rail_dict.keys()[0].seq)}
+	loci = db.loci
+	loci.insert(locus)
+	print "locus = ", re.sub(".fasta","",fasta), "; number alleles = ", len(rail_dict), "length = ", len(records[0].seq)   
+	
+print "total of ", loci.count() , "loci"
+
+####this creates a dictionary with the names of individuals as keys, so that counts may be associated with individuals
+print "\n...reading the names file into a list...\n"
+names_file = open("names.txt", "r")
+lines = names_file.readlines()
+lines = [line[:-1] for line in lines] #remove trailing new line
+names_file.close()
+
+for name in lines:
+	name1 = name+".01"
+	print "name: ", name, "found in: ", db.loci.find({"individuals": name1}).count(), "loci"
