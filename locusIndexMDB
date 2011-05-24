@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Filename: locusIndex_db.py for lociNGS
+# Filename: locusIndex.py for lociNGS
 # shird; 24 may 2011
 import os
 from Bio import SeqIO
