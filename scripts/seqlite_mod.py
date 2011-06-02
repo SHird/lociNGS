@@ -175,54 +175,59 @@ def SNPnumber(fileFromProgram):
 	
 	# return the sequences to their original orientation...
 	datarow_sub=[]
-	datarow_list= map(lambda *datacols: [elem or '-' for elem in datacols], *datacols) 
+	if len(datacols) > 0:
+		datarow_list= map(lambda *datacols: [elem or '-' for elem in datacols], *datacols) 
 	
-	# these are lists, so have to "pack" them back into strings
-	for ri in range(len(datarow_list)):
-		datarow_sub.append(''.join(datarow_list[ri]))
+		# these are lists, so have to "pack" them back into strings
+		for ri in range(len(datarow_list)):
+			datarow_sub.append(''.join(datarow_list[ri]))
 	
-	# print datarow_sub
-	# (create a numbered list that we can use to look up in the index order later)
+		# print datarow_sub
+		# (create a numbered list that we can use to look up in the index order later)
 	
-	indexholder=range(numseqs)
-	# pull names out of original list to add to new list...
+		indexholder=range(numseqs)
+		# pull names out of original list to add to new list...
 	
-	indexdict = dict(zip(datarow_sub,indexholder))
+		indexdict = dict(zip(datarow_sub,indexholder))
+		
+		# make a dictionary with d['a'][0] = index and d['a'][1] as name
 	
-	# make a dictionary with d['a'][0] = index and d['a'][1] as name
+		## DEBUG ##
+		# print 'indexdict:',indexdict
+		
+		# remove repeats now that the list has been shortened
+		sortkeys = list(set(datarow_sub))  # still unsorted
+		
+		# sort keys (i.e., sequences) to group by similarity
+		if sortthem:
+			sortkeys.sort()
+		
+		# # use this -- a backwards dictionary again
+		outdict=dict(zip(datarow_sub,dataname))
+		# needed???
+		datarow_sub.sort()
+		
+		########### need to check that we aren't messing things up with all this sorting!
+		
+		origname=dataset.keys()
+		origval=dataset[origname[0]];
+		
+		# remove 1 from the length if NBRF format because of the asterisk
+		introout='Processing file '+inputfilename 
+		#print introout
+		firstout= "From a list of %d sites in %d sequences," % (len(origval)-1*nbrf, len(origname))
+		#print firstout
+		secondout= "%d unique sites remain in %d sequences\n" % (len(datarow_sub[0]), len(sortkeys))
+		
+		number_of_SNPS = (len(datarow_sub[0]))
+		
+		#print'This is the SNP # ', SNPSnumber
+		#print secondout
+		return number_of_SNPS
 	
-	## DEBUG ##
-	# print 'indexdict:',indexdict
+	else:
+		return 0 ;
 	
-	# remove repeats now that the list has been shortened
-	sortkeys = list(set(datarow_sub))  # still unsorted
-	
-	# sort keys (i.e., sequences) to group by similarity
-	if sortthem:
-		sortkeys.sort()
-	
-	# # use this -- a backwards dictionary again
-	outdict=dict(zip(datarow_sub,dataname))
-	# needed???
-	datarow_sub.sort()
-	
-	########### need to check that we aren't messing things up with all this sorting!
-	
-	origname=dataset.keys()
-	origval=dataset[origname[0]];
-	
-	# remove 1 from the length if NBRF format because of the asterisk
-	introout='Processing file '+inputfilename 
-	#print introout
-	firstout= "From a list of %d sites in %d sequences," % (len(origval)-1*nbrf, len(origname))
-	#print firstout
-	secondout= "%d unique sites remain in %d sequences\n" % (len(datarow_sub[0]), len(sortkeys))
-	
-	number_of_SNPS = (len(datarow_sub[0]))
-	
-	#print'This is the SNP # ', SNPSnumber
-	#print secondout
-	return number_of_SNPS
 	
 if __name__ == "__main__":
-	print info.__doc__
+		print info.__doc__
