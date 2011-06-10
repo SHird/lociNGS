@@ -10,10 +10,10 @@ import re
 from seqlite_mod import SNPnumber
 from Bio import SeqIO
 from pymongo import Connection
+from Bio.Alphabet import generic_protein, generic_dna, generic_nucleotide
 
 connection = Connection()
 db = connection.test_database
-collection = db.test_collection
 loci = db.loci
 
 #set up a cursor to return all paths of documents that contain the individuals in the $all array
@@ -28,7 +28,7 @@ def iter():
 dictFromJSON = []				
 for x in iter():
 	dictFromJSON.append(json.dumps(x))
-	print x, "the end"
+#	print x, "the end"
 
 #text modification to actually be able to access file at end of path	
 for y in range(len(dictFromJSON)):
@@ -37,14 +37,33 @@ for y in range(len(dictFromJSON)):
 	dictFromJSON[y] = dictFromJSON[y].replace('}','')
 	dictFromJSON[y] = dictFromJSON[y].replace('path: ','')
 	file = dictFromJSON[y]
-	loci_dict = SeqIO.index(file, "fasta")
-	for key in loci_dict.keys():
-		print key, loci_dict[key].seq	
-		print "\r\r"
-#		print "y is ", y, "file is ", file, "locidict ", loci_dict[key].seq
+	print file
+	file = file.strip()
+	output_handle = file.replace(".fasta", ".nex")
+	print output_handle
+	count = SeqIO.convert(file, "fasta", output_handle, "nexus", generic_dna)
 
+
+
+
+
+
+
+#	print count
 	
-	#print dictFromJSON[y]
+	#for record in SeqIO.parse(file, "fasta"):
+	#	count = SeqIO.convert(record, "fasta", record, "nexus")
+	#	print count
+	
+	#loci_dict = SeqIO.index(file, "fasta")
+	#print loci_dict
+	
+	#for key in loci_dict.keys():
+	#	print key, loci_dict[key].seq	
+	#	print "\r\r"
+#		print "y is ", y, "file is ", file, "locidict ", loci_dict[key].seq
+	
+#print dictFromJSON[y]
 
 
 
