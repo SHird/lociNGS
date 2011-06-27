@@ -23,22 +23,66 @@ args = parser.parse_args()
 print 'Got this file:', args.path
 #demoFile = args.path)
 
-
-
-
-
 f1 = open(args.path, 'r')
 rows = [ line.strip().split('\t') for line in f1 ]
 
+#popColumnNum = 0
+#indColumnNum = 0
+
+indColumnNum = rows[0].index("Individual")
+popColumnNum = rows[0].index("Population")
+print "popCol is ", popColumnNum, "indCol is ", indColumnNum
+
+
 #put data into list of lists and insert to mongodb
 listOfDemo = []
+popList = []
+		
 for row in range(1, len(rows)):
+	popList.append(rows[row][popColumnNum])
+
 	for column in range(len(rows[0])):
 		demoCurrent = []
 		demoCurrent = (rows[0][column], rows[row][column])
 		listOfDemo.append(demoCurrent)
-	#	print rows[0][column], rows[row][column]
 	dict_listOfDemo = (listOfDemo)
 	y = dict(dict_listOfDemo)
 	print y
 	demographic.insert(y)
+
+dictPopList={}
+print popList
+setList = set(popList)
+for one in setList:
+	dictPopList[one] = []
+for row in range(1, len(rows)):
+	dictPopList[rows[row][popColumnNum]].append(rows[row][indColumnNum])
+#	print rows[row][popColumnNum]
+
+loci = db.loci
+for each in dictPopList:
+	print each
+	print dictPopList[each]
+	db.loci.update( {"indInFasta" : {'$in': dictPopList[each] } } , {'$addToSet' : {'populationsInFasta': each } }, multi=True )
+	
+#cursor2 = 	db.loci.find({"populationsInFasta": {'$in' : ['POP1', 'POP2']} } )
+#print "Setup cursor: %s" % cursor2
+#for x in cursor2:
+#	print x
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
