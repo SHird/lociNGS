@@ -13,6 +13,9 @@ import pymongo
 import re
 from Bio import SeqIO
 from pymongo import Connection
+from decimal import *
+
+getcontext().prec = 2
 
 #for getting a connection to MongoDB via pymongo
 connection = Connection()
@@ -49,12 +52,23 @@ for bam in bam_library:
 
 #this counts the matches of reads to a given locus in allLoci, adds 1 for each match then updates MDB
 		for n in allLoci:   #foreach locus in the allLoci list
+			totalbases = 0
 			count = 0
 			for alignedread in samfile.fetch(n):
 				count = count + 1
+				totalbases = totalbases + alignedread.rlen  #problem here: will count all bases even if coverage too low for individual to be called in loci file
 			m = re.sub('.+\|.+\|','',n)	
+		#	print n, totalbases
 			if count>0:
-				db.loci.update( {"locusNumber" : m }, { '$inc' : { namePath : count } } )
-				print n, count  #can turn this off to quicken script - prints every locus and it's count
+				cursor = db.loci.find( {"locusNumber" : m} , {"length":1, "_id" : 0} )
+				for x in cursor:
+					currentLength = x["length"]
+					averageCov = Decimal(totalbases)/Decimal(currentLength)
+					twoDecCov = float(Decimal(averageCov))
+					db.loci.update( {"locusNumber" : m }, { '$inc' : { namePath : twoDecCov} } )
+					print "updated locusNumber", m, "so that ", namePath, "is now ", twoDecCov, "because totalbases is ", totalbases, "and length is", currentLength
+		
+		#		print n, count  #can turn this off to quicken script - prints every locus and it's count
+
 
 samfile.close()
