@@ -110,11 +110,10 @@ def fromDemographicData (demoFile):
 	indColumnNum = rows[0].index("Individual")
 	popColumnNum = rows[0].index("Population")
 	print "popCol is ", popColumnNum, "indCol is ", indColumnNum
-	
-	
 	#put all demographic data into list of lists and insert to mongodb
 	listOfDemo = []
 	popList = []
+	indList=[]
 	for row in rows[1:]: # all rows except the first header row
 		print row[popColumnNum]
 		popList.append(row[popColumnNum])
@@ -126,9 +125,11 @@ def fromDemographicData (demoFile):
 		y = dict(dict_listOfDemo)
 		print y
 		demographic.insert(y)
-	
-	
-	#create dictionary where population is key and array of individuals belonging to pops is value
+		indList.append(row[indColumnNum])
+
+	for ind in indList:
+		print ind, db.loci.find({ "indInFasta" : ind }).count()
+		db.demographic.update( {"Individual" : ind }, { '$inc' : { "numLoci" : db.loci.find({ "indInFasta" : ind } ).count() } } )
 	dictPopList={}
 	print popList
 	setList = set(popList)
@@ -136,10 +137,33 @@ def fromDemographicData (demoFile):
 		dictPopList[one] = []
 	for row in rows[1:]:
 		dictPopList[row[popColumnNum]].append(row[indColumnNum])
-	#	print rows[row][popColumnNum]
-	
-	
-	#for every locus, if any of the individuals in the IndInFasta collection match a population, add population to populationsInFasta collection
 	loci = db.loci
 	for each, pop_list in dictPopList.iteritems():
+		print each, pop_list
 		db.loci.update( {"indInFasta" : {'$in': dictPopList[each] } } , {'$addToSet' : {'populationsInFasta': each } }, multi=True )	
+		
+
+def getAllInds():
+	demographic = db.demographic
+	cursor = db.demographic.find({}, {"Individual":1, "_id":0})
+	allInds=[]
+	for x in cursor:
+		allInds.append(x["Individual"])
+	allIndsSorted = sorted(allInds)
+	return allIndsSorted
+	
+def getPopDict():
+	individuals = getAllInds()
+	dictPopList={}
+	popList = []
+	demographic = db.demographic
+	cursor = db.demographic.find({}, {"Population":1, "_id":0})
+	for y in cursor:
+		popList.append(y["Population"])
+	setList = set(popList)
+	for one in setList:
+		dictPopList[one] = []
+		cursor2 = db.demographic.find({"Population" : one}, {"Individual":1, "_id":0})
+		for ind in cursor2:
+			dictPopList[one].append(ind["Individual"])
+	return dictPopList

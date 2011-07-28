@@ -11,7 +11,7 @@ from Bio import SeqIO
 from Bio.Alphabet import generic_protein, generic_dna, generic_nucleotide
 from pymongo import Connection
 import datetime 
-
+from constructionMDB import getPopDict
 #MongoDB connection
 connection = Connection()
 db = connection.test_database
@@ -90,7 +90,8 @@ def toNexus (listOfFiles):
 		output_handle = file.replace(".fasta", ".nex")
 		SeqIO.convert(file, "fasta", output_handle, "nexus", generic_dna)
 
-def toIMa2 (listOfFiles, popDict):
+def toIMa2 (listOfFiles):
+	popDict = getPopDict()
 	numberPops = len(popDict)
 	numberLoci = len(listOfFiles)
 
@@ -146,7 +147,9 @@ def toIMa2 (listOfFiles, popDict):
 		locusHeader = currentLocusName + " " 
 		for each in popsToUseTuple:
 			locusHeader = locusHeader + str(popDict[each][0] + 1) + " "
-		locusHeader = locusHeader + str(length) + " " + listInput[3] + " " + listInput[4] + "\r\n"
+		mutRateFinal = 0.0000	
+		mutRateFinal = float(listInput[4]) / length
+		locusHeader = locusHeader + str(length) + " " + listInput[3] + " " + str(mutRateFinal) + "\r\n"
 		dataList = sorted(dataList) #make sure in correct order
 		outputFile.write(locusHeader)
 		for x in dataList:
