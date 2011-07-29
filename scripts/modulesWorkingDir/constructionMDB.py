@@ -40,10 +40,8 @@ def fromLociFiles (folderOfFiles):
 			loci_list = list(SeqIO.parse(file, "fasta"))
 			for eachLocus in loci_list:
 				if eachLocus.id.endswith(".01"):
-			#		print eachLocus.id
 					current = []
 					current = (eachLocus.id.replace(".01", ""), 0)
-				#	print current
 					listOflists.append(current)
 			dict_listOflists = (listOflists)
 			x = (dict(dict_listOflists))
@@ -52,21 +50,18 @@ def fromLociFiles (folderOfFiles):
 			loci.insert(locus)
 			print "locusFasta = ", fasta, "; locusNumber = ", '\g<dig>' , "; individuals",	x, "; indInFasta" , x.keys(),"; SNPs = ", SNP, "; number alleles = ", len(loci_list), "; length = ", len(loci_list[0])  , "; path = ", file
 	print "total of ", loci.count() , "loci"
-
 	
 def fromBAMFolder (BAMFolder):
 	getcontext().prec = 2	
 	print 'Got this folder:', BAMFolder
 	bam_library = os.listdir(BAMFolder)
 	bamPath = {"bamPath" : BAMFolder }
-	db.loci.insert(bamPath)
-	
+	db.loci.insert(bamPath)	
 	#for each .bam file, count how many reads/locus and add to correct document in mongoDB
 	for bam in bam_library:
 		if bam.endswith(".bam"):
 			file = os.path.join(BAMFolder, bam)
 			print 'Got this file: ', file
-	###will need to index the bam files if not already done?
 			samfile = pysam.Samfile(file, "rb")
 			print samfile.nreferences   #prints number of loci
 			allLoci = samfile.references
@@ -77,9 +72,8 @@ def fromBAMFolder (BAMFolder):
 			for line in countView:
 				line = line.strip() 
 			print "line is now ", line
-			db.demographic.update( {"Individual" : currentName }, { '$set' : { "totalReads" : line } } )		
-	
-	#this counts the matches of reads to a given locus in allLoci, adds 1 for each match then updates MDB
+			db.demographic.update( {"Individual" : currentName }, { '$set' : { "totalReads" : line } } )			
+			#this counts the matches of reads to a given locus in allLoci, adds 1 for each match then updates MDB
 			for n in allLoci:   #foreach locus in the allLoci list
 				totalbases = 0
 				count = 0
@@ -87,7 +81,7 @@ def fromBAMFolder (BAMFolder):
 					count = count + 1
 					totalbases = totalbases + alignedread.rlen  #problem here: will count all bases even if coverage too low for individual to be called in loci file
 				m = re.sub('.+\|.+\|','',n)	
-			#	print n, totalbases
+				#	print n, totalbases
 				if count>0:
 					cursor = db.loci.find( {"locusNumber" : m} , {"length":1, "_id" : 0} )
 					for x in cursor:
@@ -95,17 +89,14 @@ def fromBAMFolder (BAMFolder):
 						averageCov = Decimal(totalbases)/Decimal(currentLength)
 						twoDecCov = float(Decimal(averageCov))
 						db.loci.update( {"locusNumber" : m }, { '$inc' : { namePath : twoDecCov} } )
-					#	print "updated locusNumber", m, "so that ", namePath, "is now ", twoDecCov, "because totalbases is ", totalbases, "and length is", currentLength
 			#		print n, count  #can turn this off to quicken script - prints every locus and it's count
 	samfile.close()
-	
 	
 def fromDemographicData (demoFile):
 	#open tab delimited text file
 	print 'Got this file:', demoFile
 	f1 = open(demoFile, 'r')
 	rows = [ line.strip().split('\t') for line in f1 ]
-	
 	#identify which column corresponds to the individuals and populations
 	indColumnNum = rows[0].index("Individual")
 	popColumnNum = rows[0].index("Population")
@@ -126,7 +117,6 @@ def fromDemographicData (demoFile):
 		print y
 		demographic.insert(y)
 		indList.append(row[indColumnNum])
-
 	for ind in indList:
 		print ind, db.loci.find({ "indInFasta" : ind }).count()
 		db.demographic.update( {"Individual" : ind }, { '$inc' : { "numLoci" : db.loci.find({ "indInFasta" : ind } ).count() } } )
@@ -142,7 +132,6 @@ def fromDemographicData (demoFile):
 		print each, pop_list
 		db.loci.update( {"indInFasta" : {'$in': dictPopList[each] } } , {'$addToSet' : {'populationsInFasta': each } }, multi=True )	
 		
-
 def getAllInds():
 	demographic = db.demographic
 	cursor = db.demographic.find({}, {"Individual":1, "_id":0})
@@ -167,3 +156,10 @@ def getPopDict():
 		for ind in cursor2:
 			dictPopList[one].append(ind["Individual"])
 	return dictPopList
+	
+def getDemoColumnsFromMDB():
+	cursor = db.demographic.find( { } , {"_id" : 0 })
+	columns = []
+	for each in cursor[0].keys():
+		columns.append(each)
+	return columns
