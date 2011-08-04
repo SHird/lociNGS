@@ -11,7 +11,6 @@ from constructionMDB import getAllInds
 from constructionMDB import getPopDict
 from constructionMDB import getDemoColumnsFromMDB
 from convertingLociNGS import getRawFastaFromBAM
-from Tix import ScrolledWindow
 from convertingLociNGS import *
 from pymongo import Connection
 
@@ -105,9 +104,11 @@ def pickPops():
 		for each in range(len(popsmen.state())):
 			if popsmen.state()[each] == 1:
 				popsToUse.append(popsList[each])
+		print "these are the pops to use:", popsToUse		
 		cursor = db.loci.find( {"populationsInFasta" : { '$all' : popsToUse } } , {"path" : 1 , "_id" : 0 })
 		popPathList = []
 		for n in cursor:
+			print n
 			popPathList.append(n["path"])
 		print popPathList
 		POPMENUprograms(popPathList)
@@ -166,13 +167,14 @@ def createLocusWindow(string):
 		label9 = Label(frame, text = locus).grid(row=1+locList.index(locus), column = 0, padx = 6)
 		cursor = loci.find( {"locusFasta" : locus })
 		for x in cursor:
-			X = x["locusNumber"]
+			X = x["locusFasta"]
 			locusTotal = 0
 			label6=Label(frame, text = x["length"] ).grid(row=1+locList.index(locus),column = 1, padx = 6)
 			label7=Label(frame, text=str(len(x["indInFasta"]))).grid(row=1+locList.index(locus), column=3, padx = 6)
 			fake = {}
 			fake = x["individuals"]
 			for each in fake:
+				print locusTotal, fake[each], each
 				locusTotal = locusTotal + fake[each]
 				Y = fake[string]
 			button1=Button(frame, text = fake[string], command = lambda X=X: getRawFastaFromBAM(string,X)).grid(row=1+locList.index(locus), column = 2, padx = 6)
@@ -269,7 +271,7 @@ class GridDemo(Frame):
 		self.master.rowconfigure( 0, weight = 1 )
 		self.master.columnconfigure( 0, weight = 1 )
 		self.grid( sticky = W+E+N+S )
-		self.label1=Label(self, text = "Please enter the data in the order listed in the Input Menu.\nOnce data has been loaded via the Input Menu, press 'Display the data'.")
+		self.label1=Label(self, text = "Please enter the data in the order listed in the Import Menu.\nOnce data has been loaded via the Import Menu, press 'Display the data'.")
 		self.label1.grid(row = 0, column = 0, padx = 6)	
 		
 def main():

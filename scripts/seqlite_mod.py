@@ -34,10 +34,10 @@ def SNPnumber(fileFromProgram):
 	backseqs={}
 	
 	# First, load in the seqs into a dictionary
-	if len(sys.argv)>1:
-		inputfilename = fileFromProgram
-	else: 
-		print usage
+#	if len(sys.argv)>1:
+	inputfilename = fileFromProgram
+#	else: 
+#		print usage
 
 	try: 
 		inFile = open(inputfilename, 'r') 
