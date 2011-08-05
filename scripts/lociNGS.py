@@ -1,17 +1,18 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 from Tkinter import *
-from tkMessageBox import *
+import tkMessageBox
 from tkFileDialog   import askopenfilename
 from tkFileDialog   import askdirectory
-from constructionMDB import fromLociFiles
-from constructionMDB import fromBAMFolder
-from constructionMDB import fromDemographicData
-from constructionMDB import getAllInds
-from constructionMDB import getPopDict
-from constructionMDB import getDemoColumnsFromMDB
-from convertingLociNGS import getRawFastaFromBAM
-from convertingLociNGS import *
+from lociNGS.constructionMDB import fromLociFiles
+from lociNGS.constructionMDB import fromBAMFolder
+from lociNGS.constructionMDB import fromDemographicData
+from lociNGS.constructionMDB import getAllInds
+from lociNGS.constructionMDB import getPopDict
+from lociNGS.constructionMDB import getDemoColumnsFromMDB
+from lociNGS.convertingLociNGS import getRawFastaFromBAM
+from Tix import ScrolledWindow
+from lociNGS.convertingLociNGS import *
 from pymongo import Connection
 
 #MongoDB connection
@@ -21,18 +22,34 @@ loci = db.loci
 demographic = db.demographic
 indList=[]
 
+#	return "ok"
+	#B1 = Tkinter.Button(top, text = "Say Hello", command = hello)
+	#B1.pack()
+	
+def popup(string):
+	master = Toplevel()
+	master.withdraw()
+	textMessage = "Successful Import of:\n\n"+string
+	tkMessageBox.showinfo("Success", textMessage)
+	mainloop()
+
+
 def callbackBAM():
-    BAMfolder = askdirectory() 
-    fromBAMFolder(BAMfolder)
+	BAMfolder = askdirectory() 
+	fromBAMFolder(BAMfolder)
+	popup(BAMfolder)
     
 def callbackFasta():
 	FastaFolder = askdirectory() 
 	fromLociFiles(FastaFolder)	
+	popup(FastaFolder)
 	
 def callbackDemo():
 	Demofile = askopenfilename() 
 	fromDemographicData(Demofile)
-
+	#tkMessageBox.showinfo("Successful Import", "hooray")	
+	popup(Demofile)
+	
 class Checkbar(Frame):
     def __init__(self, parent=None, picks=[], side=LEFT, anchor=W):
         Frame.__init__(self, parent)
@@ -104,11 +121,9 @@ def pickPops():
 		for each in range(len(popsmen.state())):
 			if popsmen.state()[each] == 1:
 				popsToUse.append(popsList[each])
-		print "these are the pops to use:", popsToUse		
 		cursor = db.loci.find( {"populationsInFasta" : { '$all' : popsToUse } } , {"path" : 1 , "_id" : 0 })
 		popPathList = []
 		for n in cursor:
-			print n
 			popPathList.append(n["path"])
 		print popPathList
 		POPMENUprograms(popPathList)
@@ -137,8 +152,8 @@ def createLocusWindow(string):
 	vscrollbar.grid(row=0, column=1, sticky=N+S)
 	hscrollbar = AutoScrollbar(root, orient=HORIZONTAL)
 	hscrollbar.grid(row=1, column=0, sticky=E+W)
-	w, h = root.winfo_screenwidth(), root.winfo_screenheight()
-	canvas = Canvas(root,yscrollcommand=vscrollbar.set,xscrollcommand=hscrollbar.set, width = w, height = h)
+	h = root.winfo_screenheight()
+	canvas = Canvas(root,yscrollcommand=vscrollbar.set,xscrollcommand=hscrollbar.set, width = 600, height = h)
 	canvas.grid(row=0, column=0, sticky=N+S+E+W)
 	vscrollbar.config(command=canvas.yview)
 	hscrollbar.config(command=canvas.xview)
@@ -173,10 +188,13 @@ def createLocusWindow(string):
 			label7=Label(frame, text=str(len(x["indInFasta"]))).grid(row=1+locList.index(locus), column=3, padx = 6)
 			fake = {}
 			fake = x["individuals"]
+			print "this fake now:", fake
 			for each in fake:
-				print locusTotal, fake[each], each
 				locusTotal = locusTotal + fake[each]
+				print "currentLocustotal:", locusTotal
 				Y = fake[string]
+				print "this is Y:", Y 	
+			print "X is", X, "string is:", string, "final locus total:", locusTotal	
 			button1=Button(frame, text = fake[string], command = lambda X=X: getRawFastaFromBAM(string,X)).grid(row=1+locList.index(locus), column = 2, padx = 6)
 			button2 = Button(frame, text = locusTotal, command = lambda X = X: getAllRawFastaFromBAM(X)).grid(row=1+locList.index(locus), column = 4, padx = 6)					
 	canvas.create_window(0, 0, anchor=NW, window=frame)
@@ -193,7 +211,7 @@ def createSummaryWindow():
 	hscrollbar = AutoScrollbar(root, orient=HORIZONTAL)
 	hscrollbar.grid(row=1, column=0, sticky=E+W)
 	w, h = root.winfo_screenwidth(), root.winfo_screenheight()
-	canvas = Canvas(root,yscrollcommand=vscrollbar.set,xscrollcommand=hscrollbar.set, height = h, width = w)
+	canvas = Canvas(root,yscrollcommand=vscrollbar.set,xscrollcommand=hscrollbar.set, width = 800, height = h)
 	canvas.grid(row=0, column=0, sticky=N+S+E+W)
 	vscrollbar.config(command=canvas.yview)
 	hscrollbar.config(command=canvas.xview)
@@ -243,15 +261,23 @@ def clearMDB():
 	demographic = db.demographic
 	db.demographic.remove()
 	db.loci.remove()
-		
+
+#def labelUpdate(string):
+#	v.set("Please enter the data in the order listed in the Import Menu.\nOnce data has been loaded via the Import Menu, press 'Display the data'.")
+#	root.update_idletasks()		
+
 class GridDemo(Frame):
-	def __init__( self ):
+	def __init__(self, master=None):
 		from pymongo import Connection
-		Frame.__init__( self )			
+		Frame.__init__( self, master )			
 		#this creates the menu	
 		top = self.winfo_toplevel()
 		self.menubar = Menu(top)
 		top["menu"] = self.menubar
+		top.rowconfigure(0, weight=1)
+		top.columnconfigure(0, weight=1)
+		self.rowconfigure(0, weight=1)
+		self.columnconfigure(0, weight=1)
 		self.casmenu = Menu(self.menubar)
 		self.casmenu.impmenu = Menu(self.casmenu)
 		self.casmenu.expmenu = Menu(self.casmenu)				
@@ -271,10 +297,18 @@ class GridDemo(Frame):
 		self.master.rowconfigure( 0, weight = 1 )
 		self.master.columnconfigure( 0, weight = 1 )
 		self.grid( sticky = W+E+N+S )
-		self.label1=Label(self, text = "Please enter the data in the order listed in the Import Menu.\nOnce data has been loaded via the Import Menu, press 'Display the data'.")
+		v = StringVar()
+		v.set("Please enter the data in the order listed in the Import Menu.\nOnce data has been loaded via the Import Menu, press 'Display the data'.")
+		self.label1=Label(self, textvariable = v)
 		self.label1.grid(row = 0, column = 0, padx = 6)	
 		
+		
+		
+
 def main():
-	GridDemo().mainloop()
+	root=Tk()
+	GD = GridDemo()
+	GD.mainloop()
+	#GridDemo().mainloop()
 if __name__ == '__main__':
-    main()
+	main()
