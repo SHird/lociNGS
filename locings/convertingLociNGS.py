@@ -173,6 +173,9 @@ def getRawFastaFromBAM(ind,locusFasta):
 							outputFile.write("\r")
 							count = count + 1
 				samfile.close()
+	pathname = os.path.dirname(sys.argv[0])        
+	return os.path.abspath(pathname)
+
 				
 def getAllRawFastaFromBAM(locusFasta):
 	import pysam
@@ -203,3 +206,5 @@ def getAllRawFastaFromBAM(locusFasta):
 						outputFile.write("\r")
 						count = count + 1
 			samfile.close()
+	pathname = os.path.dirname(sys.argv[0])        
+	return os.path.abspath(pathname)

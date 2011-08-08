@@ -29,26 +29,28 @@ indList=[]
 def popup(string):
 	master = Toplevel()
 	master.withdraw()
-	textMessage = "Successful Import of:\n\n"+string
-	tkMessageBox.showinfo("Success", textMessage)
+	#textMessage = "Successful Import of:\n\n"+string
+	tkMessageBox.showinfo("Success", string)
 	mainloop()
 
 
 def callbackBAM():
 	BAMfolder = askdirectory() 
 	fromBAMFolder(BAMfolder)
-	popup(BAMfolder)
+	success = "Successful Import of : \n\n"+BAMfolder
+	popup(success)
     
 def callbackFasta():
 	FastaFolder = askdirectory() 
 	fromLociFiles(FastaFolder)	
-	popup(FastaFolder)
+	success = "Successful Import of : \n\n"+FastaFolder
+	popup(success)
 	
 def callbackDemo():
 	Demofile = askopenfilename() 
 	fromDemographicData(Demofile)
-	#tkMessageBox.showinfo("Successful Import", "hooray")	
-	popup(Demofile)
+	success = "Successful Import of : \n\n"+Demofile
+	popup(success)
 	
 class Checkbar(Frame):
     def __init__(self, parent=None, picks=[], side=LEFT, anchor=W):
@@ -146,6 +148,16 @@ class AutoScrollbar(Scrollbar):
     def place(self, **kw):
         raise TclError, "cannot use place with this widget"
 
+def compoundButton(string, X):
+	path = getRawFastaFromBAM(string,X)
+	success = "File Printed to:\n\n"+path
+	popup(success)
+
+def compoundButton2(X):
+	path = getAllRawFastaFromBAM(X)
+	success = "File Printed to:\n\n"+path
+	popup(success)
+
 def createLocusWindow(string):
 	root = Tk()
 	vscrollbar = AutoScrollbar(root)
@@ -195,8 +207,8 @@ def createLocusWindow(string):
 				Y = fake[string]
 				print "this is Y:", Y 	
 			print "X is", X, "string is:", string, "final locus total:", locusTotal	
-			button1=Button(frame, text = fake[string], command = lambda X=X: getRawFastaFromBAM(string,X)).grid(row=1+locList.index(locus), column = 2, padx = 6)
-			button2 = Button(frame, text = locusTotal, command = lambda X = X: getAllRawFastaFromBAM(X)).grid(row=1+locList.index(locus), column = 4, padx = 6)					
+			button1=Button(frame, text = fake[string], command = lambda X=X: compoundButton(string,X)).grid(row=1+locList.index(locus), column = 2, padx = 6)
+			button2 = Button(frame, text = locusTotal, command = lambda X=X: compoundButton2(X)).grid(row=1+locList.index(locus), column = 4, padx = 6)					
 	canvas.create_window(0, 0, anchor=NW, window=frame)
 	frame.update_idletasks()
 	canvas.config(scrollregion=canvas.bbox("all"))
