@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #convertingLociNGS.py
 #S.Hird; 11 july 2011
 
@@ -23,8 +23,12 @@ now = datetime.datetime.now()
 def toNexus (listOfFiles):
 	for file in listOfFiles:
 		output_handle = file.replace(".fasta", ".nex")
+		output_handle = re.sub(".+/.+/", os.getcwd()+"/", output_handle) 
 		SeqIO.convert(file, "fasta", output_handle, "nexus", generic_dna)
-
+	dir = os.getcwd()
+	return dir
+	
+	
 def toIMa2 (listOfFiles):
 	popDict = getPopDict()
 	numberPops = len(popDict)
@@ -93,7 +97,8 @@ def toIMa2 (listOfFiles):
 		outputFile.write(locusHeader)
 		for x in dataList:
 			outputFile.write(x)	
-	forMigrate = outputFile.name
+	forMigrate = []		
+	forMigrate = [outputFile.name, os.getcwd]
 	return forMigrate
 			
 def toMigrate (IMaInputFile):
@@ -140,7 +145,9 @@ def toMigrate (IMaInputFile):
 			outputFile.write(" ")
 			outputFile.write(z[1])
 			outputFile.write("\n")
-	
+	dir = os.getcwd()
+	return dir
+		
 def getRawFastaFromBAM(ind,locusFasta):
 	import pysam
 	print ind
