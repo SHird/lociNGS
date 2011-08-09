@@ -145,7 +145,7 @@ def getRawFastaFromBAM(ind,locusFasta):
 	import pysam
 	print ind
 	locusShort = re.sub('.fasta', '', locusFasta)
-	locusNumber = re.sub('.+_','',locusShort)
+#	locusNumber = re.sub('.+_','',locusShort)
 	print "locus Short :", locusShort
 	file = 'readsFor_'+ind+'_'+locusShort+'.fasta'
 	outputFile = open(file, 'w')
@@ -167,15 +167,14 @@ def getRawFastaFromBAM(ind,locusFasta):
 						bamName = bam.partition(".")
 						locus = reference
 						for alignedread in samfile.fetch(locus):
-							outputFile.write(">"+bamName[0]+"_"+str(locusNumber)+"_"+str(count))
+							outputFile.write(">"+bamName[0]+"_"+locusShort+"_"+str(count))
 							outputFile.write("\r")
 							outputFile.write(alignedread.seq)
 							outputFile.write("\r")
 							count = count + 1
 				samfile.close()
-	pathname = os.path.dirname(sys.argv[0])        
-	return os.path.abspath(pathname)
-
+	currentcwd = os.getcwd()
+	return currentcwd
 				
 def getAllRawFastaFromBAM(locusFasta):
 	import pysam
@@ -200,11 +199,11 @@ def getAllRawFastaFromBAM(locusFasta):
 					bamName = bam.partition(".")
 					locus = reference
 					for alignedread in samfile.fetch(locus):
-						outputFile.write(">"+bamName[0]+"_"+str(count))
+						outputFile.write(">"+bamName[0]+"_"+locusShort+"_"+str(count))
 						outputFile.write("\r")
 						outputFile.write(alignedread.seq)
 						outputFile.write("\r")
 						count = count + 1
 			samfile.close()
-	pathname = os.path.dirname(sys.argv[0])        
-	return os.path.abspath(pathname)
+	currentcwd = os.getcwd()
+	return currentcwd
