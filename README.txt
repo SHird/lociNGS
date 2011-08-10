@@ -73,16 +73,16 @@ When you are finished with lociNGS and MongoDB, you must shut down MongoDB corre
 3. Locate the Processor Name [under the Hardware Overview].
 4. Compare your Processor Name to information below to determine whether your Mac has a 32-bit or 64-bit processor.
 
-Processor Name		32- or 64-bit
-Intel Core Solo		32 bit
-Intel Core Duo		32 bit
-Intel Core 2 Duo		64 bit
-Intel Quad-Core Xeon	64 bit
-Dual-Core Intel Xeon	64 bit
-Quad-Core Intel Xeon	64 bit
-Core i3			64 bit
-Core i5			64 bit
-Core i7			64 bit
+Processor Name			32- or 64-bit
+Intel Core Solo				32 bit
+Intel Core Duo				32 bit
+Intel Core 2 Duo			64 bit
+Intel Quad-Core Xeon		64 bit
+Dual-Core Intel Xeon		64 bit
+Quad-Core Intel Xeon		64 bit
+Core i3						64 bit
+Core i5						64 bit
+Core i7						64 bit
 
 1.2. lociNGS Easy Install
 download the lociNGS package from GitHub. You may either go to the website [ https://github.com/SHird/lociNGS ] and click the "Downloads" button (then choose the .tar.gz option). When the package has downloaded, double click the download and move the folder to the Applications folder (or wherever you'd like it to be).
