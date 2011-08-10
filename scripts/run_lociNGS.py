@@ -122,7 +122,6 @@ class MainScreen(Frame):
 					print "this is Y:", Y 	
 				print "X is", X, "string is:", string, "final locus total:", locusTotal	
 				button1=Button(frame, text = fake[string], command = lambda X=X: self.someReads(string, X)).grid(row=1+locList.index(locus), column = 2, padx = 6)
-				t1 = ToolTip(frame, follow_mouse=1, text="I'm a tooltip with follow_mouse set to 1, so I won't be placed outside my parent")
 				button2 = Button(frame, text = locusTotal, command = lambda X=X: self.allReads(X)).grid(row=1+locList.index(locus), column = 4, padx = 6)					
 		canvas.create_window(0, 0, anchor=NW, window=frame)
 		frame.update_idletasks()
@@ -269,7 +268,6 @@ class MainScreen(Frame):
 		frame = Text(canvas, width=100, height=300)
 		for line in f1:	
 			line.strip()
-			print line
 			frame.insert('end', line)						    
 		frame.rowconfigure(1, weight=1)
 		frame.columnconfigure(1, weight=1)
@@ -281,15 +279,8 @@ class MainScreen(Frame):
 	
 	def buttons(self):
 		root = Toplevel()
-#		vscrollbar = AutoScrollbar(root)
-#		vscrollbar.grid(row=0, column=1, sticky=N+S)
-#		hscrollbar = AutoScrollbar(root, orient=HORIZONTAL)
-#		hscrollbar.grid(row=1, column=0, sticky=E+W)
-#		w, h = root.winfo_screenwidth(), root.winfo_screenheight()
 		canvas = Canvas(root, height=250, width=490) 
 		canvas.grid(row=0, column=0, sticky=N+S+E+W)
-#		vscrollbar.config(command=canvas.yview)
-#		hscrollbar.config(command=canvas.xview)
 		root.grid_rowconfigure(0, weight=1)
 		root.grid_columnconfigure(0, weight=1)
 		frame = Text(canvas)
