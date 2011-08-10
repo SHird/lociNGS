@@ -122,6 +122,7 @@ class MainScreen(Frame):
 					print "this is Y:", Y 	
 				print "X is", X, "string is:", string, "final locus total:", locusTotal	
 				button1=Button(frame, text = fake[string], command = lambda X=X: self.someReads(string, X)).grid(row=1+locList.index(locus), column = 2, padx = 6)
+				t1 = ToolTip(frame, follow_mouse=1, text="I'm a tooltip with follow_mouse set to 1, so I won't be placed outside my parent")
 				button2 = Button(frame, text = locusTotal, command = lambda X=X: self.allReads(X)).grid(row=1+locList.index(locus), column = 4, padx = 6)					
 		canvas.create_window(0, 0, anchor=NW, window=frame)
 		frame.update_idletasks()
@@ -251,6 +252,58 @@ class MainScreen(Frame):
 		self.master.config(menu=self.menubar)
 		self.casmenu()
 	    
+	def openREADME(self):
+		f1 = open("README.txt", 'r')
+		root = Toplevel()
+		vscrollbar = AutoScrollbar(root)
+		vscrollbar.grid(row=0, column=1, sticky=N+S)
+		hscrollbar = AutoScrollbar(root, orient=HORIZONTAL)
+		hscrollbar.grid(row=1, column=0, sticky=E+W)
+		w, h = root.winfo_screenwidth(), root.winfo_screenheight()
+		canvas = Canvas(root,yscrollcommand=vscrollbar.set, xscrollcommand=hscrollbar.set,width = 750, height = h) 
+		canvas.grid(row=0, column=0, sticky=N+S+E+W)
+		vscrollbar.config(command=canvas.yview)
+		hscrollbar.config(command=canvas.xview)
+		root.grid_rowconfigure(0, weight=1)
+		root.grid_columnconfigure(0, weight=1)
+		frame = Text(canvas, width=100, height=300)
+		for line in f1:	
+			line.strip()
+			print line
+			frame.insert('end', line)						    
+		frame.rowconfigure(1, weight=1)
+		frame.columnconfigure(1, weight=1)
+		canvas.create_window(0, 0,anchor=NW, window=frame)
+		frame.update_idletasks()
+		canvas.config(scrollregion=canvas.bbox("all"))
+		root.title("README")
+		root.mainloop()
+	
+	def buttons(self):
+		root = Toplevel()
+#		vscrollbar = AutoScrollbar(root)
+#		vscrollbar.grid(row=0, column=1, sticky=N+S)
+#		hscrollbar = AutoScrollbar(root, orient=HORIZONTAL)
+#		hscrollbar.grid(row=1, column=0, sticky=E+W)
+#		w, h = root.winfo_screenwidth(), root.winfo_screenheight()
+		canvas = Canvas(root, height=250, width=490) 
+		canvas.grid(row=0, column=0, sticky=N+S+E+W)
+#		vscrollbar.config(command=canvas.yview)
+#		hscrollbar.config(command=canvas.xview)
+		root.grid_rowconfigure(0, weight=1)
+		root.grid_columnconfigure(0, weight=1)
+		frame = Text(canvas)
+		text1 = """numLoci = number displayed on the button corresponds to the number\nof loci where the individual has written alleles. Pushing this\nbutton will take you to the next screen - the screen that gives\ndetails about each of the loci.\n\nCoverage_This_Ind = number displayed on the button corresponds to\nthe number of raw reads that aligned to that particular locus\nin that particular individual. Pushing this button will output those\nraw reads to a file and the file's location will be output to the\nlociNGS main screen.\n\nCoverage_Total = number displayed on the button corresponds to the\nnumber of raw reads that aligned to that particular locus for all\nindividuals. Pushing this button will output all the raw reads for\nthe locus to a file an the file's location will be output to the\nlociNGS main screen.\n"""
+		frame.insert('end', text1)						    
+		frame.rowconfigure(1, weight=1)
+		frame.columnconfigure(1, weight=1)
+		canvas.create_window(0, 0, anchor=NW, window=frame)
+		frame.update_idletasks()
+		canvas.config(scrollregion=canvas.bbox("all"))
+		root.title("lociNGS Buttons")
+		root.mainloop()
+		
+		
 	def casmenu(self):
 		casmenu = Menu(self.menubar)
 		casmenu.impmenu = Menu(casmenu)
@@ -268,6 +321,10 @@ class MainScreen(Frame):
 		casmenu.add_command(label='Clear Database', command=self.clearMDB)
 		casmenu.add_command(label='Goodbye', command=sys.exit)
 		self.menubar.add_cascade(label="File", menu=casmenu)
+		helpmenu = Menu(self.menubar)
+		helpmenu.add_command(label='lociNGS buttons', command=self.buttons)
+		helpmenu.add_command(label='README', command=self.openREADME)
+		self.menubar.add_cascade(label="Help", menu = helpmenu)
 
 	def __init__(self, parent=None):
 		Frame.__init__(self, parent)
