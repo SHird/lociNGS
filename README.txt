@@ -76,7 +76,7 @@ When you are finished with lociNGS and MongoDB, you must shut down MongoDB corre
 Processor Name			32- or 64-bit
 Intel Core Solo				32 bit
 Intel Core Duo 				32 bit
-Intel Core 2 Duo  			64 bit
+Intel Core 2 Duo  	  		64 bit
 Intel Quad-Core Xeon   		64 bit
 Dual-Core Intel Xeon   		64 bit
 Quad-Core Intel Xeon   		64 bit
