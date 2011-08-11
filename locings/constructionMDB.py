@@ -29,26 +29,24 @@ demographic = db.demographic
 def fromLociFiles (folderOfFiles):
 	print 'Got this folder:', folderOfFiles
 	fasta_library = os.listdir(folderOfFiles)
-	#print fasta_library
-
 	#print data to post collection in mongoDB
 	for fasta in fasta_library:
 		listOflists = []
 		if fasta.endswith(".fasta"):
 			file = os.path.join(folderOfFiles, fasta)
 			print 'Got this file: ', file
+			short = fasta.split(".")
 			loci_list = list(SeqIO.parse(file, "fasta"))
 			for eachLocus in loci_list:
 				if eachLocus.id.endswith(".01"):
 					current = []
 					current = (eachLocus.id.replace(".01", ""), 0)
 					listOflists.append(current)
-			print "LISTOFLISTS", listOflists
 			dict_listOflists = (listOflists)
 			x = (dict(dict_listOflists))
 			print "X IS: ", x
 			SNP = SNPnumber(file)	#calls the SNPnumber function
-			locus = {"locusFasta":fasta, "locusNumber": re.sub(".+_(?P<dig>\d+)\D+","\g<dig>", fasta), "individuals": x, "indInFasta" : x.keys(), "length": len(loci_list[0]), "path": file, "SNPs" : SNP }   #, "length":len(loci_dict.keys()[0].seq)}
+			locus = {"locusFasta":fasta, "locusName":short[0], "locusNumber": re.sub(".+_(?P<dig>\d+)\D+","\g<dig>", fasta), "individuals": x, "indInFasta" : x.keys(), "length": len(loci_list[0]), "path": file, "SNPs" : SNP }   #, "length":len(loci_dict.keys()[0].seq)}
 			loci.insert(locus)
 			print "locusFasta = ", fasta, "; locusNumber = ", '\g<dig>' , "; individuals",	x, "; indInFasta" , x.keys(),"; SNPs = ", SNP, "; number alleles = ", len(loci_list), "; length = ", len(loci_list[0])  , "; path = ", file
 	print "total of ", loci.count() , "loci"
@@ -62,13 +60,13 @@ def fromBAMFolder (BAMFolder):
 	#for each .bam file, count how many reads/locus and add to correct document in mongoDB
 	for bam in bam_library:
 		if bam.endswith(".bam"):
+			print bam
 			file = os.path.join(BAMFolder, bam)
 			print 'Got this file: ', file
 			samfile = pysam.Samfile(file, "rb")
 			print samfile.nreferences   #prints number of loci
 			allLoci = samfile.references
-			currentName = re.sub('/.+/', '', file)
-			currentName = re.sub('.sorted.bam','', currentName)
+			currentName = re.sub('.sorted.bam','', bam)
 			namePath = "individuals."+currentName
 			print "this is namePath", namePath, "this is currentName", currentName
 			countView = pysam.view("-c",file)  #counts number of reads in bam file
@@ -78,22 +76,22 @@ def fromBAMFolder (BAMFolder):
 			db.demographic.update( {"Individual" : currentName }, { '$set' : { "totalReads" : line } } )			
 			#this counts the matches of reads to a given locus in allLoci, adds 1 for each match then updates MDB
 			for n in allLoci:   #foreach locus in the allLoci list
+				print "on locus n in allLoci", n
+				shortLocus = []
+				shortLocus = n.split("|")
 				totalbases = 0
 				count = 0
 				for alignedread in samfile.fetch(n):
 					count = count + 1
 					totalbases = totalbases + alignedread.rlen  #problem here: will count all bases even if coverage too low for individual to be called in loci file
-				m = n+".fasta"
-				m = re.sub('.+\|.+\|','',m)	
-				#	print n, totalbases
 				if count>0:
-					cursor = db.loci.find( {"locusFasta" : m} , {"length":1, "_id" : 0} )
+					cursor = db.loci.find( {"locusName" : shortLocus[-1]} , {"length":1, "_id" : 0} )
 					for x in cursor:
 						currentLength = x["length"]
 						averageCov = Decimal(totalbases)/Decimal(currentLength)
 						twoDecCov = float(Decimal(averageCov))
-						db.loci.update( {"locusFasta" : m }, { '$inc' : { namePath : twoDecCov} } )
-	samfile.close()
+						db.loci.update( {"locusName" : shortLocus[-1] }, { '$inc' : { namePath : twoDecCov} } )
+		samfile.close()
 	
 def fromDemographicData (demoFile):
 	#open tab delimited text file

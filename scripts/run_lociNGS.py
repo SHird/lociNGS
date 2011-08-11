@@ -103,10 +103,10 @@ class MainScreen(Frame):
 		locList = []
 		cursorLoc = loci.find( {"indInFasta": string})
 		for y in cursorLoc:
-			locList.append(y["locusFasta"])
+			locList.append(y["locusName"])
 		for locus in locList:
 			label9 = Label(frame, text = locus).grid(row=1+locList.index(locus), column = 0, padx = 6)
-			cursor = loci.find( {"locusFasta" : locus })
+			cursor = loci.find( {"locusName" : locus })
 			for x in cursor:
 				X = x["locusFasta"]
 				locusTotal = 0
@@ -181,14 +181,19 @@ class MainScreen(Frame):
 		def allstates(): 
 			print "these are results", popmen.state()
 			if popmen.state()[0] == 1:
-				dir = toNexus(list)
+				dirName = toNexus(list)
+				dirFinal = "Nexus file(s) printed to:  "+dirName		
+				self.createWidgets(dirFinal)
 			if popmen.state()[1] == 1:
-				dir = toIMa2(list)[1]
+				dirList = toIMa2(list)
+				dirFinal = "IMa2 file printed to:  "+dirList[1]		
+				self.createWidgets(dirFinal)
 			if popmen.state()[2] ==1:
-				dir = toMigrate(toIMa2(list))
+				dirList = toIMa2(list)
+				toMigrate(dirList[0])
+				dirFinal = "Migrate file printed to:  "+dirList[1]		
+				self.createWidgets(dirFinal)
 			poproot.destroy()
-			dirFinal = "File(s) printed to:  "+dir		
-			self.createWidgets(dirFinal)
 		popmen.config(relief=GROOVE, bd=2)
 		Button(poproot, text='Save', command=allstates).pack(side=RIGHT)
 	

@@ -19,7 +19,6 @@ loci = db.loci
 demographic = db.demographic
 now = datetime.datetime.now()
 
-
 def toNexus (listOfFiles):
 	for file in listOfFiles:
 		output_handle = file.replace(".fasta", ".nex")
@@ -27,7 +26,6 @@ def toNexus (listOfFiles):
 		SeqIO.convert(file, "fasta", output_handle, "nexus", generic_dna)
 	dir = os.getcwd()
 	return dir
-	
 	
 def toIMa2 (listOfFiles):
 	popDict = getPopDict()
@@ -97,13 +95,13 @@ def toIMa2 (listOfFiles):
 		outputFile.write(locusHeader)
 		for x in dataList:
 			outputFile.write(x)	
-	forMigrate = []		
-	forMigrate = [outputFile.name, os.getcwd]
-	return forMigrate
+	forMigrateList = []		
+	forMigrateList = [outputFile.name, os.getcwd()]
+	return forMigrateList
 			
-def toMigrate (IMaInputFile):
+def toMigrate (IMa2InputFile):
 	imaList = []
-	imaFile = open(IMaInputFile, 'r') #get ima2 file and turn into list of lists
+	imaFile = open(IMa2InputFile, 'r') #get ima2 file and turn into list of lists
 	rows = [ line.strip().split(' ') for line in imaFile ]
 	populations = {}
 	numberPerLocus = {}
@@ -145,16 +143,13 @@ def toMigrate (IMaInputFile):
 			outputFile.write(" ")
 			outputFile.write(z[1])
 			outputFile.write("\n")
-	dir = os.getcwd()
-	return dir
 		
 def getRawFastaFromBAM(ind,locusFasta):
 	import pysam
 	print ind
-	locusShort = re.sub('.fasta', '', locusFasta)
-#	locusNumber = re.sub('.+_','',locusShort)
-	print "locus Short :", locusShort
-	file = 'readsFor_'+ind+'_'+locusShort+'.fasta'
+	locusShort = locusFasta.split(".")
+	print "locus Short :", locusShort[0]
+	file = 'readsFor_'+ind+'_'+locusShort[0]+'.fasta'
 	outputFile = open(file, 'w')
 	cursor = db.loci.find({"bamPath":{'$exists':True}})
 	for y in cursor:
@@ -167,14 +162,13 @@ def getRawFastaFromBAM(ind,locusFasta):
 				file = os.path.join(bamPath, bam)
 				samfile = pysam.Samfile(file, "rb")
 				for reference in samfile.references:
-		#			print reference
-					if reference.endswith('|'+locusShort):
+					if reference.endswith('|'+locusShort[0]):
 						print reference, "ref 2\r"
 						bamName = ()
 						bamName = bam.partition(".")
 						locus = reference
 						for alignedread in samfile.fetch(locus):
-							outputFile.write(">"+bamName[0]+"_"+locusShort+"_"+str(count))
+							outputFile.write(">"+bamName[0]+"_"+locusShort[0]+"_"+str(count))
 							outputFile.write("\r")
 							outputFile.write(alignedread.seq)
 							outputFile.write("\r")
@@ -185,9 +179,8 @@ def getRawFastaFromBAM(ind,locusFasta):
 				
 def getAllRawFastaFromBAM(locusFasta):
 	import pysam
-	locusShort = re.sub('.fasta', '', locusFasta)
-	locusNumber = re.sub('.+_','',locusShort)
-	file = 'allReads_'+locusShort+'.fasta'
+	locusShort = locusFasta.split(".")
+	file = 'allReads_'+locusShort[0]+'.fasta'
 	outputFile = open(file, 'w') #open output and print header
 	cursor = db.loci.find({"bamPath":{'$exists':True}})
 	for y in cursor:
@@ -199,14 +192,13 @@ def getAllRawFastaFromBAM(locusFasta):
 			file = os.path.join(bamPath, bam)
 			samfile = pysam.Samfile(file, "rb")
 			for reference in samfile.references:
-	#			print reference
-				if reference.endswith('|'+locusShort):
-					print reference, "ref 2\r"					
+				if reference.endswith('|'+locusShort[0]):
+#					print reference, "ref 2\r"					
 					bamName = ()
 					bamName = bam.partition(".")
 					locus = reference
 					for alignedread in samfile.fetch(locus):
-						outputFile.write(">"+bamName[0]+"_"+locusShort+"_"+str(count))
+						outputFile.write(">"+bamName[0]+"_"+locusShort[0]+"_"+str(count))
 						outputFile.write("\r")
 						outputFile.write(alignedread.seq)
 						outputFile.write("\r")
