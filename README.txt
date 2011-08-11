@@ -26,6 +26,8 @@ LOCINGS: a simple database for reformatting and displaying multi-locus datasets
 	2.3. Starting MongoDB
 	2.4. Starting lociNGS
 3. INPUT FORMATS
+	3.1 Import types
+	3.2 Locus Names **IMPORTANT**
 4. IMPORTING DATA
 	4.1. Loci/fasta file(s)
 	4.2. SAM/BAM NGS data
@@ -130,11 +132,26 @@ MongoDB must be running before lociNGS is started. To do this, you can find "mon
 To run the program, open a terminal window and type "run_lociNGS.py". This should open a new window with these basic instructions: "Please enter the data in the order listed in the Import Menu. Once data has been loaded via the Import Menu, press ‘Display the data'." Don't close this window – it will close the program.
 
 3. INPUT FORMATS
+3.1 Import types
 lociNGS uses three imports. 
-[1] The first is a folder of files that contain loci in fasta format. These files should have ".fasta" as their extension. The folder may be located anywhere.
+[1] The first is a folder of files that contain loci in fasta format. These files should have ".fasta" as their final extension. The folder may be located anywhere.
 [2] The second import is a folder of indexed bam files from a short read aligner. Each bam (and corresponding .bai) file should correspond to an individual in the dataset. I'm working on getting sam format to work too, but for right now, indexed bam works best.
 [3] The third is a tab-delimited text file that contains demographic data for the individuals in the dataset. There must be at least two columns, labeled "Individual" and "Population", which contain information on the name of the individual (as it appears in locus files and BAM file names) and which population the individual came from (these can be numbers or letters). The file may contain as many columns as you'd like, they will appear on the "Summary Screen" of the program.
 *lociNGS will run and reformat loci if just [1] loci and [3] demographic data are entered. 
+
+3.2 Locus Names **IMPORTANT**
+The names of the files from import [1] that correspond to loci need to match with the locus names in the BAM files, import [2]. Basically, if your loci are called "locus1", "locus2" and "locus3", the fasta files need to be called "locus1.fasta", "locus2.fasta" and "locus3.fasta" and the loci in your BAM file need to be "locus1", "locus2" and "locus3". There are a few exceptions - the locus file name comes from anything before the first "." in the locus file name - so the files could be called "locus1.aln.fasta" or "locus1.080911.fasta" as long as the prefix before the first "." matches the BAM loci. Also, the BAM loci may have prefixes, but this time, due to common GenBank annotation, you may add things to the BAM loci names with a "|" as a separator. So BAM loci may be called something like "gi|323|testdata|locus1" as long as the last piece of the header matches the fasta loci names.
+Any combination of the below files will work in lociNGS. Please feel free to contact me if you are unsure if your locus names are causing the program difficulty.
+
+FASTA FILE - must contain the locus name before the first period and have ".fasta" as final extension
+locus1.fasta
+locus1.aln.fasta
+locus1.test.data.fasta
+
+BAM LOCUS NAME - must contain the locus name after the final | or as the only text
+locus1
+fake|any text you want|locus1
+gi|323|fakeData|08august2011|locus1
 
 4. IMPORTING DATA
 4.1 Loci/fasta file(s)
