@@ -102,10 +102,10 @@ For more information: http://www.scipy.org/Download
 
 1.3.3 Biopython - http://biopython.org/wiki/Download; download, double click, move the folder into the home directory, open terminal window, cd into folder, type three commands: [1] "python setup.py build", [2] "python setup.py test", [3] "sudo python setup.py install"
 
-1.3.4 Pymongo - https://github.com/mongodb/mongo-python-driver; click "Downloads" button (upper-ish right of screen); click "1.11";  once it downloads, rename the folder "pymongo", put the folder in the home directory, cd into it, and type "python setup.py install"
+1.3.4 PyMongo - https://github.com/mongodb/mongo-python-driver; click "Downloads" button (upper-ish right of screen); click "1.11";  once it downloads, rename the folder "pymongo", put the folder in the home directory, cd into it, and type "python setup.py install"
 For more information, other installation options: http://api.mongodb.org/python/current/installation.html
 
-1.3.5 Pysam - http://code.google.com/p/pysam/downloads/list; download file, double-click, move folder into Applications folder (or where you'd like to keep it), cd into folder and type two commands: [1] "python setup.py build", [2] "python setup.py install"
+1.3.5 pysam - http://code.google.com/p/pysam/downloads/list; download file, double-click, move folder into Applications folder (or where you'd like to keep it), cd into folder and type two commands: [1] "python setup.py build", [2] "python setup.py install"
 
 1.3.6 seqlite_mod.py – this module is included with the distribution and you should have to do nothing to compile or install it.
 
