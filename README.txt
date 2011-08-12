@@ -193,11 +193,13 @@ Header Line: Type whatever you want here that will identify your IMa run
 Population Tree: ((0,1):5,(2,3):4):6
 Inheritance Scalar: 1
 Mutation Model: H
-Mutation Rate (optional): 0.008
-Mutation Rate Range Lower (optional): 0.0007
-Mutation Rate Range Upper (optional): 0.0009
+Mutation Rate (optional): 0.000008
+Mutation Rate Range Lower (optional): 0.000007
+Mutation Rate Range Upper (optional): 0.000009
 
-If you aren't using the Mutation Rate Parameters, delete them from the file. If you are, please note that the mutation rate you enter needs to be the XXX mutation rate, lociNGS will divide it by the length of each locus to give a PER BASE mutation rate (which is what the program requires). Also note that the Population Tree is required and is a very specific format, so please check with the IMa2 documentation for how to write it.
+If you aren't using the Mutation Rate Parameters, delete them from the file. If you are, please note that the mutation rate you enter needs to be the substitutions / site mutation rate; lociNGS will multiply this rate by the length of each locus (# of sites) to give a per base mutation rate (which is what the program requires). Also note that the Population Tree is required and is a very specific format, so please check with the IMa2 documentation for how to write it.
+
+Also note, the same inheritance scalar and mutation model will be printed for every locus. If you have different types of data (autosome, mtDNA, X- or Y-linked data), you might want to put the similar types together in a folder and load them independently into lociNGS, and export with the correct inheritance scalar in the IMa2InputFile. You can then concatenate the files.
 
 6.3 Migrate format
 Migrate format requires that an IMa2 additional file be in the folder, but doesn't use the information – so if you just need Migrate output, leave the example IMa2InputFile.txt in the folder as is.
