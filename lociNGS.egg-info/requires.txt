@@ -1,4 +1,0 @@
-biopython >= 1.57
-pysam >= 0.4.1
-pymongo >= 1.11
-numpy >= 1.6.1
