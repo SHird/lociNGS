@@ -49,35 +49,37 @@ class MainScreen(Frame):
 		FastaFolder = askdirectory() 
 		fromLociFiles(FastaFolder)	
 		success = "Successful Import of:  "+FastaFolder
-		self.createWidgets(success)
+		self.createWidgets(success, "BLACK")
 
 	def callbackBAM(self):
 		BAMfolder = askdirectory() 
 		fromBAMFolder(BAMfolder)
 		success = "Successful Import of:  "+BAMfolder
-		self.createWidgets(success)
+		self.createWidgets(success, "BLACK")
     
 	def callbackDemo(self):
 		Demofile = askopenfilename() 
 		fromDemographicData(Demofile)
-		success = "Successful Import of:  "+Demofile
-		self.createWidgets(success)
+		success = "Successful Import of:  "+Demofile+"\n"
+		self.createWidgets(success, "BLACK")
 		
 	def clearMDB(self):
 		db.demographic.remove()
 		db.loci.remove()
 		success = "\n*** DATABASE CLEARED ***\n"
-		self.createWidgets(success)
+		self.createWidgets(success, "RED")
 
 	def someReads(self, string, X):
 		dir = getRawFastaFromBAM(string,X)
-		success = "Reads Printed to:  "+dir
-		self.createWidgets(success)
+		locShort = X.split(".")
+		success = "Reads for   [INDIVIDUAL: "+string+", LOCUS: " + locShort[0]+ "]   printed to: "+dir
+		self.createWidgets(success, "BLUE")
 		
 	def allReads(self, X):	
 		dir = getAllRawFastaFromBAM(X)
-		success = "Reads Printed to:  "+dir
-		self.createWidgets(success)
+		locShort = X.split(".")
+		success = "All reads for   [LOCUS: "+ locShort[0] + "]   printed to: "+dir
+		self.createWidgets(success,"BLUE")
 
 	def createLocusWindow(self, string):
 		root = Tk()
@@ -97,9 +99,10 @@ class MainScreen(Frame):
 		frame.columnconfigure(1, weight=1)	
 		label1=Label(frame, text = "Locus Name").grid(row = 0, column = 0, padx = 6)
 		label2=Label(frame, text="Length").grid(row=0, column=1, padx = 6)
-		label3=Label(frame, text="Coverage_This_Ind").grid(row=0, column=2, padx = 6)
-		label4=Label(frame, text="Number_Inds").grid(row=0, column=3, padx = 6)
-		label5=Label(frame, text="Coverage_Total").grid(row=0, column=4, padx = 6)
+		label9=Label(frame, text="SNPs").grid(row=0, column=2, padx = 6)
+		label3=Label(frame, text="Coverage_This_Ind").grid(row=0, column=3, padx = 6)
+		label4=Label(frame, text="Number_Inds").grid(row=0, column=4, padx = 6)
+		label5=Label(frame, text="Coverage_Total").grid(row=0, column=5, padx = 6)
 		locList = []
 		cursorLoc = loci.find( {"indInFasta": string})
 		for y in cursorLoc:
@@ -111,7 +114,8 @@ class MainScreen(Frame):
 				X = x["locusFasta"]
 				locusTotal = 0
 				label6=Label(frame, text = x["length"] ).grid(row=1+locList.index(locus),column = 1, padx = 6)
-				label7=Label(frame, text=str(len(x["indInFasta"]))).grid(row=1+locList.index(locus), column=3, padx = 6)
+				label8=Label(frame, text = x["SNPs"] ).grid(row=1+locList.index(locus),column = 2, padx = 6)
+				label7=Label(frame, text=str(len(x["indInFasta"]))).grid(row=1+locList.index(locus), column=4, padx = 6)
 				fake = {}
 				fake = x["individuals"]
 				print "this fake now:", fake
@@ -120,9 +124,9 @@ class MainScreen(Frame):
 					print "currentLocustotal:", locusTotal
 					Y = fake[string]
 					print "this is Y:", Y 	
-				print "X is", X, "string is:", string, "final locus total:", locusTotal	
-				button1=Button(frame, text = fake[string], command = lambda X=X: self.someReads(string, X)).grid(row=1+locList.index(locus), column = 2, padx = 6)
-				button2 = Button(frame, text = locusTotal, command = lambda X=X: self.allReads(X)).grid(row=1+locList.index(locus), column = 4, padx = 6)					
+			#	print "X is", X, "string is:", string, "final locus total:", locusTotal	
+				button1=Button(frame, text = fake[string], command = lambda X=X: self.someReads(string, X)).grid(row=1+locList.index(locus), column = 3, padx = 6)
+				button2 = Button(frame, text = locusTotal, command = lambda X=X: self.allReads(X)).grid(row=1+locList.index(locus), column = 5, padx = 6)					
 		canvas.create_window(0, 0, anchor=NW, window=frame)
 		frame.update_idletasks()
 		canvas.config(scrollregion=canvas.bbox("all"))
@@ -179,20 +183,20 @@ class MainScreen(Frame):
 		popmen = Checkbar(poproot, programs)
 		popmen.pack(side=LEFT)
 		def allstates(): 
-			print "these are results", popmen.state()
+		#	print "these are results", popmen.state()
 			if popmen.state()[0] == 1:
 				dirName = toNexus(list)
-				dirFinal = "Nexus file(s) printed to:  "+dirName		
-				self.createWidgets(dirFinal)
+				dirFinal = "Nexus file(s) printed to: "+dirName		
+				self.createWidgets(dirFinal, "BLUE")
 			if popmen.state()[1] == 1:
 				dirList = toIMa2(list)
-				dirFinal = "IMa2 file printed to:  "+dirList[1]		
-				self.createWidgets(dirFinal)
+				dirFinal = "IMa2 file printed to: "+dirList[1]		
+				self.createWidgets(dirFinal, "BLUE")
 			if popmen.state()[2] ==1:
 				dirList = toIMa2(list)
 				toMigrate(dirList[0])
-				dirFinal = "Migrate file printed to:  "+dirList[1]		
-				self.createWidgets(dirFinal)
+				dirFinal = "Migrate file printed to: "+dirList[1]		
+				self.createWidgets(dirFinal, "BLUE")
 			poproot.destroy()
 		popmen.config(relief=GROOVE, bd=2)
 		Button(poproot, text='Save', command=allstates).pack(side=RIGHT)
@@ -245,11 +249,11 @@ class MainScreen(Frame):
 		popsmen.config(relief=GROOVE, bd=2)
 		Button(popsroot, text='Save', command=allstates).pack(side=RIGHT)
 	
-	def createWidgets(self, string):
+	def createWidgets(self, string, colorText):
 		self.makeMenuBar()
 		strVar = StringVar()
 		strVar.set(string)
-		L = Label(self, textvariable=strVar).pack(expand=YES, fill=BOTH)
+		L = Label(self, textvariable=strVar, fg=colorText).pack(expand=YES, fill=BOTH)
 	
 	def makeMenuBar(self):
 		self.menubar = Menu(self.master)
@@ -326,7 +330,7 @@ class MainScreen(Frame):
 		Frame.__init__(self, parent)
 		self.pack(expand=YES, fill=BOTH)
 		intro = "Please enter the data in the order listed in the Import Menu.\nOnce data has been loaded via the Import Menu, press 'Display the data'."
-		self.createWidgets(intro)
+		self.createWidgets(intro, "BLACK")
 		self.master.title("Welcome to lociNGS")
 	
 if __name__ == '__main__': 
