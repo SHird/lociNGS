@@ -1,0 +1,13 @@
+README.txt
+setup.py
+lociNGS.egg-info/PKG-INFO
+lociNGS.egg-info/SOURCES.txt
+lociNGS.egg-info/dependency_links.txt
+lociNGS.egg-info/namespace_packages.txt
+lociNGS.egg-info/requires.txt
+lociNGS.egg-info/top_level.txt
+locings/__init__.py
+locings/constructionMDB.py
+locings/convertingLociNGS.py
+locings/seqlite_mod.py
+scripts/run_lociNGS.py
