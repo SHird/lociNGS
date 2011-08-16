@@ -148,7 +148,7 @@ class MainScreen(Frame):
 		root.grid_rowconfigure(0, weight=1)
 		root.grid_columnconfigure(0, weight=1)
 		frame = Frame(canvas, width=768, height=576)
-		listOfColumns = ["Individual", "Population", "numLoci"]	
+		listOfColumns = ["Individual", "Population", "numLoci", "totalReads"]	
 		list1 = getDemoColumnsFromMDB()
 		newList1 = []
 		for each in list1:
@@ -168,6 +168,7 @@ class MainScreen(Frame):
 					if listOfColumns.index(i) != 2:
 						label=Label(frame, text = x[i] ).grid(row=1+indList.index(ind),column = listOfColumns.index(i), padx = 6)
 				button=Button(frame, text=x["numLoci"], command=lambda X = X: self.createLocusWindow(X)).grid(row=1+indList.index(ind), column=2, padx = 6)
+				label10 = Label(frame, text=x["totalReads"]).grid(row=1+indList.index(ind), column = 3, padx = 6)
 		frame.rowconfigure(1, weight=1)
 		frame.columnconfigure(1, weight=1)
 		canvas.create_window(0, 0,anchor=NW, window=frame)

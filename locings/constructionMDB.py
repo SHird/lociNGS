@@ -59,30 +59,35 @@ def fromBAMFolder (BAMFolder):
 	db.loci.insert(bamPath)	
 	#for each .bam file, count how many reads/locus and add to correct document in mongoDB
 	for bam in bam_library:
-		if bam.endswith(".bam"):
+		if bam.endswith(".bam") or bam.endswith(".sam"):
 			print bam
 			file = os.path.join(BAMFolder, bam)
 			print 'Got this file: ', file
-			samfile = pysam.Samfile(file, "rb")
+			if bam.endswith(".bam"):
+				samfile = pysam.Samfile(file, "rb")
+			else:
+				samfile = pysam.Samfile(file, "r")
 			print samfile.nreferences   #prints number of loci
 			allLoci = samfile.references
-			currentName = re.sub('.sorted.bam','', bam)
+			currentNameList = bam.split(".")
+			currentName = currentNameList[0]
+#			currentName = re.sub('.sorted.bam','', bam)
 			namePath = "individuals."+currentName
 			print "this is namePath", namePath, "this is currentName", currentName
-			countView = pysam.view("-c",file)  #counts number of reads in bam file
-			for line in countView:
-				line = line.strip() 
-			print "line is now ", line
-			db.demographic.update( {"Individual" : currentName }, { '$set' : { "totalReads" : line } } )			
-			#this counts the matches of reads to a given locus in allLoci, adds 1 for each match then updates MDB
+			countBam = 0
+			for line in samfile:
+				countBam +=1
+			totalUsed = 0
 			for n in allLoci:   #foreach locus in the allLoci list
-				print "on locus n in allLoci", n
+			#	print "on locus n in allLoci", n
 				shortLocus = []
 				shortLocus = n.split("|")
 				totalbases = 0
 				count = 0
 				for alignedread in samfile.fetch(n):
+				#	usedReads = len(alignedread)
 					count = count + 1
+					totalUsed = totalUsed + 1
 					totalbases = totalbases + alignedread.rlen  #problem here: will count all bases even if coverage too low for individual to be called in loci file
 				if count>0:
 					cursor = db.loci.find( {"locusName" : shortLocus[-1]} , {"length":1, "_id" : 0} )
@@ -91,7 +96,10 @@ def fromBAMFolder (BAMFolder):
 						averageCov = Decimal(totalbases)/Decimal(currentLength)
 						twoDecCov = float(Decimal(averageCov))
 						db.loci.update( {"locusName" : shortLocus[-1] }, { '$inc' : { namePath : twoDecCov} } )
-		samfile.close()
+			demo = {"Individual" : currentName, "totalReads" : countBam, "usedReads": totalUsed, "percentUsed" : totalUsed*100/countBam }
+			demographic.insert(demo)	
+
+			samfile.close()	
 	
 def fromDemographicData (demoFile):
 	#open tab delimited text file
@@ -107,16 +115,11 @@ def fromDemographicData (demoFile):
 	popList = []
 	indList=[]
 	for row in rows[1:]: # all rows except the first header row
-		print row[popColumnNum]
 		popList.append(row[popColumnNum])
 		for i, column in enumerate(row):
-			demoCurrent = []
-			demoCurrent = (rows[0][i], column)
-			listOfDemo.append(demoCurrent)
-		dict_listOfDemo = (listOfDemo)
-		y = dict(dict_listOfDemo)
-		print y
-		demographic.insert(y)
+			if i != 0:
+				print row[indColumnNum], rows[0][i], column
+				db.demographic.update({"Individual":row[indColumnNum]}, { '$set' : {rows[0][i]: column }})
 		indList.append(row[indColumnNum])
 	for ind in indList:
 		print ind, db.loci.find({ "indInFasta" : ind }).count()

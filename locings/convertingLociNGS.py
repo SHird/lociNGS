@@ -88,11 +88,13 @@ def toIMa2 (listOfFiles):
 		locusHeader = currentLocusName + " " 
 		for each in popsToUseTuple:
 			locusHeader = locusHeader + str(popDict[each][0] + 1) + " "
-		mutRateFinal = 0.0000	
-		mutRateFinal = float(listInput[4]) * length
-		locusHeader = locusHeader + str(length) + " " + listInput[3] + " " + listInput[2] + " " + str(mutRateFinal)
-		if (len(listInput) ==6):
-			locusHeader = locusHeader + "(" + listInput[5] + "," + listInput[6] + ")"
+		locusHeader = locusHeader + str(length) + " " + listInput[3] + " " + listInput[2]
+		if (len(listInput) >4):
+			mutRateFinal = 0.0000	
+			mutRateFinal = float(listInput[4]) * length
+			locusHeader = locusHeader + " " + str(mutRateFinal)
+			if (len(listInput) ==6):
+				locusHeader = locusHeader + "(" + listInput[5] + "," + listInput[6] + ")"
 		locusHeader = locusHeader + "\n"		
 		dataList = sorted(dataList) #make sure in correct order
 		outputFile.write(locusHeader)

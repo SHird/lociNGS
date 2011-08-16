@@ -38,7 +38,12 @@ LOCINGS: a simple database for reformatting and displaying multi-locus datasets
 	6.2. IMa2 format
 	6.3. Migrate format
 7. TEST DATA
-8. CONTACT
+8. WHAT IF...
+	8.1. ...lociNGS won't start?
+	8.2. ...locus screen coverage buttons all display "0"?
+	8.3. ...summary screen shows no data?
+	8.4. Problems with IMa2 output.
+9. CONTACT
 
 ----------------------------------------------------------------
 
@@ -48,9 +53,9 @@ The program is dependent on several other pieces of software. lociNGS was writte
 1.1 MongoDB
 1.1.1 Installation of MDB
 Go to www.mongodb.org/downloads; 
-Download correct version (if you don't know if your machine is 32 or 64 bit, see next section);
-Double click the downloaded file – this should unpack it into a folder called something like "mongodb-osx-x86_64-1.8.2";
-Move the MongoDB folder to Applications (or wherever you want to keep it. ***You will need mongod to be running every time you use lociNGS, so you should remember where you put the MongoDB folder.);
+Download correct version (if you don't know if your machine is 32 or 64 bit, see section 1.1.3.);
+Double click the downloaded file – this should unpack it into a folder called something like "mongodb-osx-x86_64-1.8.2" (I would rename this folder "MongoDB" but you don't have to);
+Move the MongoDB folder to Applications (or wherever you want to keep it. ***You will need mongod running every time you use lociNGS, so you should remember where you put the MongoDB folder.);
 Make the directory that stores the data by opening a terminal and typing "mkdir –p /data/db" (without the quotations)
 Go to the mongoDB folder, then the bin folder. 
 Double click mongod. This should open a screen with something like this:
@@ -65,6 +70,8 @@ Wed Aug  3 09:13:53 [initandlisten] git version: a429cd4f535b2499cc4130b06ff7c26
 Wed Aug  3 09:13:53 [initandlisten] build sys info: Darwin erh2.10gen.cc 9.6.0 Darwin Kernel Version 9.6.0: Mon Nov 24 17:37:00 PST 2008; root:xnu-1228.9.59~1/RELEASE_I386 i386 BOOST_LIB_VERSION=1_40
 Wed Aug  3 09:13:53 [initandlisten] waiting for connections on port 27017
 Wed Aug  3 09:13:53 [websvr] web admin interface listening on port 28017
+
+Leave this window open as you run lociNGS.
 
 1.1.2. Correctly shutting down MongoDB
 When you are finished with lociNGS and MongoDB, you must shut down MongoDB correctly. Click on the terminal window then press Control + C (the control button and the "c" button at once). If you don't do this, you'll have to find a file and delete it before you can get MongoDB running again – spotlight the file "mongod.lock" then drag it to the trash.
@@ -160,11 +167,13 @@ Step 1 in the import menu will open a window where you should find and select th
 locusFasta =  JUNCOmatic_63_aln.fasta ; individuals {'J12': 0, 'J09': 0, 'J18': 0, 'J19': 0, 'J01': 0, 'J17': 0, 'J03': 0, 'J11': 0, 'J05': 0, 'J04': 0, 'J10': 0, 'J06': 0} ; indInFasta ['J12', 'J09', 'J18', 'J19', 'J01', 'J17', 'J03', 'J11', 'J05', 'J04', 'J10', 'J06'] ; SNPs =  5 ; number alleles =  24 ; length =  284 ; path =  /Users/shird/Desktop/juncoLoci/JUNCOmatic_63_aln.fasta"
 
 4.2 SAM/BAM NGS data
-Step 2 will import the net-gen alignments - you should find and select the indexed bam folder. lociNGS will update as the import is finished. The terminal window will print data as the files are read. It will look something like this for each file: 
+Step 2 will import the net-gen alignments - you should find and select the indexed sam or bam folder. lociNGS will update as the import is finished. The terminal window will print data as the files are read. It will look something like this for each file: 
 "Got this folder: /Users/shird/Documents/Dropbox/juncoBam
 Got this file:  /Users/shird/Documents/Dropbox/juncoBam/J01.sorted.bam
 730
 individuals.J01"
+Please note that .bam files are binary versions of .sam files and thus .bam files are smaller and will load faster (perhaps much faster) than .sam files. One way to convert .sam files to .bam files is the "view" tool in the samtools package (http://samtools.sourceforge.net/)
+
 
 4.1.3 Demographic data
 The final step imports the demographic data in a tab delimited file - find and select the tab delimited demographic data file. Again, lociNGS will tell you when the import has been successful and the terminal will print data for each individual as the files are read:
@@ -207,7 +216,22 @@ Migrate format requires that an IMa2 additional file be in the folder, but doesn
 7. TEST DATA
 I've included a very small test dataset, containing four individuals and five loci. 
 
-8. CONTACT
+8. WHAT IF...? 
+I've attempted compiling a list of potential problems - email me (please) if you encounter something not on this list so I can add it for other users.
+
+8.1. ...lociNGS won't start? 
+If this ("pymongo.errors.AutoReconnect: could not find master/primary") is the last line of output printed to the terminal window, it means that mongod is not running. In the MongoDB/bin folder, double click on "mongod" then try starting lociNGS again.
+ 
+8.2. ...locus screen coverage buttons all say "0"?
+This could be due to the name of the loci in the SAM/BAM files not corresponding correctly to the name of the fasta locus files. Double check by referring to section 3.2 above. 
+
+8.3. ...summary screen shows no data?
+This could be due to the names of individuals not corresponding correctly between individuals in the fasta files and the demographic data text file. The demographic table needs to have a minimum of two columns, "Individual" and "Population". Make sure the names of the indivdiuals are the same as the fasta files. 
+
+8.4. Problems with IMa2.
+The IMa2InputFile.txt needs to look almost exactly like the one I've provided. Please let me know if you have specific problems with any of the output formats. 
+
+9. CONTACT
 Please feel free to contact me about any issues you're having with lociNGS or the dependent software. I'd be more than happy to do what I can – 
 
 Sarah Hird
