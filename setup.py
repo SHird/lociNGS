@@ -12,13 +12,10 @@ setup(name = "lociNGS",
 	namespace_packages = ['locings'], 
  	packages = find_packages(),
 	scripts = [	'scripts/run_lociNGS.py'],
- #     	      	'scripts/convertingLociNGS.py',
-  #    	      	'scripts/seqlite_mod.py',
-   #   	      	'scripts/lociNGS.py',
-    #  	      	],
 	install_requires = [
+		"numpy >= 1.6.1",
 		"biopython >= 1.57",
 		"pysam >= 0.4.1",
 		"pymongo >= 1.11",
-		"numpy >= 1.6.1",
-      ])
+		"simplejson"]
+)
