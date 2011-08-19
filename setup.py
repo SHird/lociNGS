@@ -16,6 +16,11 @@ setup(name = "lociNGS",
  	packages = find_packages(),
 	scripts = [	'scripts/run_lociNGS.py'],
 	install_requires = [
+<<<<<<< HEAD
+=======
+		"numpy >= 1.6.1",
+		"biopython >= 1.57",
+>>>>>>> fe54cd84bdce7c5132dd352ce8934f85741af4dc
 		"pysam >= 0.4.1",
 		"pymongo >= 1.11",
 		"simplejson"]
