@@ -148,11 +148,11 @@ class MainScreen(Frame):
 		root.grid_rowconfigure(0, weight=1)
 		root.grid_columnconfigure(0, weight=1)
 		frame = Frame(canvas, width=768, height=576)
-		listOfColumns = ["Individual", "Population", "numLoci", "totalReads"]	
+		listOfColumns = ["Individual", "Population", "numLoci", "totalReads", "usedReads", "percentUsed"]	
 		list1 = getDemoColumnsFromMDB()
 		newList1 = []
 		for each in list1:
-			if each in ("Individual", "Population", "numLoci"):
+			if each in ("Individual", "Population", "numLoci","totalReads", "usedReads", "percentUsed"):
 				pass
 			else:
 				listOfColumns.append(each)

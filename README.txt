@@ -12,18 +12,18 @@ LOCINGS: a simple database for reformatting and displaying multi-locus datasets
 		1.1.1. Installation of MongoDB
 		1.1.2. Correctly shutting down MongoDB
 		1.1.3. How to tell if your computer is 32- or 64- bit
-	1.2. lociNGS Easy Install
+	1.2. lociNGS Easy Install **IMPORTANT**
 	1.3. More info
 		1.3.1. Python installation
 		1.3.2. NumPy
 		1.3.3. Biopython
 		1.3.4. Pymongo
 		1.3.5. Pysam
-		1.3.6. seq_lite.py
+		1.3.6. seqlite_mod.py, ex_setup.py & distribute_setup.py
 2. TO RUN lociNGS
 	2.1. Short answer
 	2.2. Contents of the folder
-	2.3. Starting MongoDB
+	2.3. Starting MongoDB **IMPORTANT**
 	2.4. Starting lociNGS
 3. INPUT FORMATS
 	3.1 Import types
@@ -42,7 +42,8 @@ LOCINGS: a simple database for reformatting and displaying multi-locus datasets
 	8.1. ...lociNGS won't start?
 	8.2. ...locus screen coverage buttons all display "0"?
 	8.3. ...summary screen shows no data?
-	8.4. Problems with IMa2 output.
+	8.4. Problems with IMa2 output
+	8.5. Problems with installation
 9. CONTACT
 
 ----------------------------------------------------------------
@@ -94,9 +95,18 @@ Core i5						64 bit
 Core i7						64 bit
 
 1.2. lociNGS Easy Install
-download the lociNGS package from GitHub. You may either go to the website [ https://github.com/SHird/lociNGS ] and click the "Downloads" button (then choose the .tar.gz option). When the package has downloaded, double click the download and move the folder to the Applications folder (or wherever you'd like it to be).
+Download the lociNGS package from GitHub. You may either go to the website [ https://github.com/SHird/lociNGS ] and click the "Downloads" button (then choose the .tar.gz option). When the package has downloaded, double click the download, rename it to "lociNGS" and move the folder to the Applications folder (or wherever you'd like it to be).
 Alternatively, if you have git on your machine, you can clone the directory by typing "git clone git@github.com:SHird/lociNGS.git /Applications/lociNGS". (This will install lociNGS into the Applications folder on MacOSX. You may move it.)
-Open a terminal window, cd into the lociNGS folder and type "python setup.py install". This should install all the components in the appropriate places. If you see some output to the terminal screen and the last line is "Finished processing dependencies for lociNGS==1.0", you're all set.
+
+
+Open a terminal window, cd into the lociNGS folder
+Type "python setup.py install" (each of these steps may take a couple of minutes to complete and will print lots of output to the terminal window)
+Type "python distribute_setup.py"
+Type "easy_install numpy" (lots of ugly output - don't worry if the last line says "
+Type "easy_install biopython"
+
+There should be a lot of output to the terminal screen.
+Once the last command has finished, type "run_lociNGS.py" - this should open a new window with a short greeting and instructions...
 
 1.3 More information
 1.3.1 Python installation
@@ -105,7 +115,7 @@ In an open terminal, type "python". This should display something like "Python 2
 If the above did not happen, go to www.python.org/getit/ for Python installation.
 
 1.3.2 NumPy  - http://sourceforge.net/projects/numpy/files/ (they have an automated installer, download the file, double click, follow instructions)
-For more information: http://www.scipy.org/Download
+For more information: http://www.scipy.org/Download. NumPy MUST be installed BEFORE Biopython!
 
 1.3.3 Biopython - http://biopython.org/wiki/Download; download, double click, move the folder into the home directory, open terminal window, cd into folder, type three commands: [1] "python setup.py build", [2] "python setup.py test", [3] "sudo python setup.py install"
 
@@ -114,7 +124,7 @@ For more information, other installation options: http://api.mongodb.org/python/
 
 1.3.5 pysam - http://code.google.com/p/pysam/downloads/list; download file, double-click, move folder into Applications folder (or where you'd like to keep it), cd into folder and type two commands: [1] "python setup.py build", [2] "python setup.py install"
 
-1.3.6 seqlite_mod.py – this module is included with the distribution and you should have to do nothing to compile or install it.
+1.3.6 seqlite_mod.py, ex_setup.py & distribute_setup.py – these module are included with the distribution and you should not have to do much to install them.
 
 2. TO RUN lociNGS:
 2.1. Short answer: find and double click "mongod"; type "run_lociNGS.py" in a terminal window
@@ -230,6 +240,31 @@ This could be due to the names of individuals not corresponding correctly betwee
 
 8.4. Problems with IMa2.
 The IMa2InputFile.txt needs to look almost exactly like the one I've provided. Please let me know if you have specific problems with any of the output formats. 
+
+8.5. Problems with installation
+First, check that you are using Python 2.7. Open a terminal and type "python". You should see something like this: 
+
+Python 2.7.1 (r271:86882M, Nov 30 2010, 10:35:34) 
+[GCC 4.2.1 (Apple Inc. build 5664)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>>
+
+If your Python is version 2.5 or 2.6, try downloading Python 2.7 and reinstalling lociNGS (section 1.2 above). If you have Python 2.7, type the following commands (after the >>>) to make sure all the packages installed correctly - if you get no feedback, it is installed correctly:
+"import numpy"
+"import Bio"
+"import pysam"
+"import pymongo"
+"import simplejson"
+"import cython"
+(to exit the python prompt, type "exit()")
+
+If you get an error like: 
+"Traceback (most recent call last):
+File "<stdin>", line 1, in <module>
+ImportError: No module named numpy"
+then that package did not install correctly. You can go to the websites listed in section 1.3 above and install the problem package independently and rerun the installation steps in section 1.2 above.
+
+If these suggestions do not work, please contact me with the error messages you're receiving and I'll try to help you get the program running. I understand there's something especially infuriating about buggy software, so please email me!
 
 9. CONTACT
 Please feel free to contact me about any issues you're having with lociNGS or the dependent software. I'd be more than happy to do what I can – 
