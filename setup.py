@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 """Setup file and install script for lociNGS.
 """
+from ez_setup import use_setuptools
+use_setuptools()
+
 from setuptools import setup, find_packages
 
 setup(name = "lociNGS",
@@ -13,8 +16,6 @@ setup(name = "lociNGS",
  	packages = find_packages(),
 	scripts = [	'scripts/run_lociNGS.py'],
 	install_requires = [
-		"numpy >= 1.6.1",
-		"biopython >= 1.57",
 		"pysam >= 0.4.1",
 		"pymongo >= 1.11",
 		"simplejson"]
