@@ -1,0 +1,7 @@
+Header Line: Type whatever you want here that will identify your IMa run
+Population Tree: ((0,1):5,(2,3):4):6
+Inheritance Scalar: 1.0
+Mutation Model: H
+Mutation Rate (optional): 0.000008
+Mutation Rate Range Lower (optional): 0.000007
+Mutation Rate Range Upper (optional): 0.000009

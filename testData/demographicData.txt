@@ -1,0 +1,5 @@
+Individual	Species	Location	Latitude	Longitude	Population
+testA	Tamias bunkus	NoPlace, TX	45.678	-109.876	POP1
+testB	Tamias bunkus	NoPlace, TX	45.678	-109.876	POP2
+testC	Tamias bunkus	NoPlace, TX	45.678	-109.876	POP1
+testD	Tamias tamias	NoPlace, TX	45.678	-109.876	POP3
