@@ -1,2 +1,0 @@
-"""lociNGS main module.
-"""
