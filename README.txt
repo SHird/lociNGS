@@ -177,13 +177,13 @@ Step 1 in the import menu will open a window where you should find and select th
 "Got this file:  /Users/shird/Desktop/juncoLoci/JUNCOmatic_63_aln.fasta
 locusFasta =  JUNCOmatic_63_aln.fasta ; individuals {'J12': 0, 'J09': 0, 'J18': 0, 'J19': 0, 'J01': 0, 'J17': 0, 'J03': 0, 'J11': 0, 'J05': 0, 'J04': 0, 'J10': 0, 'J06': 0} ; indInFasta ['J12', 'J09', 'J18', 'J19', 'J01', 'J17', 'J03', 'J11', 'J05', 'J04', 'J10', 'J06'] ; SNPs =  5 ; number alleles =  24 ; length =  284 ; path =  /Users/shird/Desktop/juncoLoci/JUNCOmatic_63_aln.fasta"
 
-4.2 SAM/BAM NGS data
-Step 2 will import the net-gen alignments - you should find and select the indexed sam or bam folder. lociNGS will update as the import is finished. The terminal window will print data as the files are read. It will look something like this for each file: 
+4.2 Indexed BAM (NGS) data
+Step 2 will import the net-gen alignments - you should find and select the indexed bam folder. lociNGS will update as the import is finished. The terminal window will print data as the files are read. It will look something like this for each file: 
 "Got this folder: /Users/shird/Documents/Dropbox/juncoBam
 Got this file:  /Users/shird/Documents/Dropbox/juncoBam/J01.sorted.bam
 730
 individuals.J01"
-Please note that .bam files are binary versions of .sam files and thus .bam files are smaller and will load faster (perhaps much faster) than .sam files. One way to convert .sam files to .bam files is the "view" tool in the samtools package (http://samtools.sourceforge.net/)
+Please note that .bam files are binary versions of .sam files. One way to convert .sam files to .bam files is the "view" tool in the samtools package (http://samtools.sourceforge.net/). You'll also want to sort and index the bam files if you haven't already done so.
 
 
 4.1.3 Demographic data
@@ -228,7 +228,7 @@ Also note, the same inheritance scalar and mutation model will be printed for ev
 Migrate format requires that an IMa2 additional file be in the folder, but doesn't use the information – so if you just need Migrate output, leave the example IMa2InputFile.txt in the folder as is.
 	
 7. TEST DATA
-I've included a very small test dataset, containing four individuals and five loci. 
+I've included a very small test dataset, containing four individuals and five loci. If the test data doesn't work, let me know! 
 
 8. WHAT IF...? 
 I've attempted compiling a list of potential problems - email me (please) if you encounter something not on this list so I can add it for other users.
